@@ -17,6 +17,8 @@ model User {
   todo_upcoming TodoUpcoming[]
   todo_progress TodoProgress[]
   todo_done TodoDone[]
+
+  @@map("user")
 }
 
 model TodoUpcoming {
@@ -28,6 +30,8 @@ model TodoUpcoming {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("todo_upcoming")
 }
 
 model TodoProgress {
@@ -39,6 +43,8 @@ model TodoProgress {
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("todo_progress")
 }
 
 model TodoDone {
@@ -50,4 +56,6 @@ model TodoDone {
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("todo_done")
 }
