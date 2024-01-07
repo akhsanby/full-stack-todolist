@@ -9,3 +9,45 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  user_id String @db.VarChar(100) @id @default(uuid())
+  username String @db.VarChar(100)
+  token String @db.VarChar(255)
+  todo_upcoming TodoUpcoming[]
+  todo_progress TodoProgress[]
+  todo_done TodoDone[]
+}
+
+model TodoUpcoming {
+  todo_id String @db.VarChar(100) @id @default(uuid())
+  category String @db.VarChar(50)
+  text String @db.Text
+  user_id String @db.VarChar(100)
+  user User @relation(fields: [user_id], references: [user_id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TodoProgress {
+  todo_id String @db.VarChar(100) @id @default(uuid())
+  category String @db.VarChar(50)
+  text String @db.Text
+  user_id String @db.VarChar(100)
+  user User @relation(fields: [user_id], references: [user_id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TodoDone {
+  todo_id String @db.VarChar(100) @id @default(uuid())
+  category String @db.VarChar(50)
+  text String @db.Text
+  user_id String @db.VarChar(100)
+  user User @relation(fields: [user_id], references: [user_id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
