@@ -23,7 +23,7 @@ model User {
 
 model TodoUpcoming {
   todo_id String @db.VarChar(100) @id @default(uuid())
-  category String @db.VarChar(50)
+  category String? @db.VarChar(50)
   text String @db.Text
   user_id String @db.VarChar(100)
   user User @relation(fields: [user_id], references: [user_id])
