@@ -1,7 +1,8 @@
 import validate from "../validation/validate.js";
-import { registerValidation, loginValidation, logoutValidation } from "../validation/user-validation.js";
+import { registerValidation, getValidation, loginValidation, logoutValidation } from "../validation/user-validation.js";
 import prismaClient from "../app/database.js";
 import jwt from "jsonwebtoken";
+import { ResponseError } from "../error/response-error.js";
 
 async function register(username) {
   username = validate(registerValidation, username);
@@ -59,6 +60,29 @@ async function login(user) {
   });
 }
 
+async function get(user_id) {
+  user_id = validate(getValidation, user_id);
+
+  const userInDatabase = await prismaClient.user.findFirst({
+    where: {
+      user_id: user_id,
+    },
+    select: {
+      token: true,
+    },
+  });
+
+  if (!userInDatabase) throw new ResponseError(403, "Unauthorized");
+
+  const secretKey = "sangatRahasia";
+  const isTokenVerified = jwt.verify(userInDatabase.token, secretKey);
+
+  return {
+    user_id: isTokenVerified.user_id,
+    username: isTokenVerified.username,
+  };
+}
+
 async function logout(user) {
   user = validate(logoutValidation, user);
 
@@ -78,5 +102,6 @@ async function logout(user) {
 export default {
   register,
   login,
+  get,
   logout,
 };

@@ -10,6 +10,16 @@ async function register(req, res) {
   });
 }
 
+async function get(req, res) {
+  const user_id = req.params.userId;
+  const result = await userService.get(user_id);
+
+  res.status(200).json({
+    status: "Authorized",
+    data: result,
+  });
+}
+
 async function logout(req, res) {
   await userService.logout(req.body);
 
@@ -20,5 +30,6 @@ async function logout(req, res) {
 
 export default {
   register,
+  get,
   logout,
 };

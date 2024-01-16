@@ -1,3 +1,5 @@
+import axiosClient from "@/utils/api";
+
 type TokenTypes = string | undefined;
 
 const isAuthorized = async (token: TokenTypes) => {
@@ -5,21 +7,20 @@ const isAuthorized = async (token: TokenTypes) => {
     return false;
   }
 
-  try {
-    const response = await fetch("http://localhost:8000/api/user", {
-      method: "get",
+  axiosClient
+    .get("/api/user", {
       headers: { Authorization: token },
+    })
+    .then((result) => {
+      if (result.data.status === "Authorized") {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .catch((err) => {
+      throw new Error(err);
     });
-    const result = await response.json();
-
-    if (result.errors === "Unauthorized") {
-      return false;
-    } else if (result.data) {
-      return true;
-    }
-  } catch (error) {
-    return false;
-  }
 };
 
 export default isAuthorized;

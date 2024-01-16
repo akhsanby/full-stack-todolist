@@ -7,6 +7,7 @@ const userRouter = new express.Router();
 userRouter.use(authMiddleware);
 
 // user api
+userRouter.get("/api/user/:userId", userController.get);
 userRouter.put("/api/user/logout", userController.logout);
 
 // todo api
