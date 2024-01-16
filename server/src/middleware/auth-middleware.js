@@ -1,4 +1,4 @@
-import { prismaClient } from "../app/database.js";
+import prismaClient from "../app/database.js";
 import jwt from "jsonwebtoken";
 
 export const authMiddleware = async (req, res, next) => {
