@@ -14,48 +14,30 @@ model User {
   user_id String @db.VarChar(100) @id @default(uuid())
   username String @db.VarChar(100) @unique
   token String? @db.Text
-  todo_upcoming TodoUpcoming[]
-  todo_progress TodoProgress[]
-  todo_done TodoDone[]
+  todos Todo[]
 
-  @@map("user")
+  @@map("users")
 }
 
-model TodoUpcoming {
-  todo_id String @db.VarChar(100) @id @default(uuid())
-  category String? @db.VarChar(50)
+model Todo {
+  todo_id String @db.VarChar(100) @id
+  category String? @db.Text
   text String @db.Text
-  user_id String @db.VarChar(100)
-  user User @relation(fields: [user_id], references: [user_id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("todo_upcoming")
-}
-
-model TodoProgress {
-  todo_id String @db.VarChar(100) @id @default(uuid())
-  category String? @db.VarChar(50)
-  text String @db.Text
-  user_id String @db.VarChar(100)
-  user User @relation(fields: [user_id], references: [user_id])
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("todo_progress")
-}
-
-model TodoDone {
-  todo_id String @db.VarChar(100) @id @default(uuid())
-  category String? @db.VarChar(50)
-  text String @db.Text
   user_id String @db.VarChar(100)
   user User @relation(fields: [user_id], references: [user_id])
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  @@map("todo_done")
+  status String @db.VarChar(10)
+  todoStatus TodoStatus @relation(fields: [status], references: [status])
+
+  createdAt String? @db.VarChar(50)
+
+  @@map("todos")
+}
+
+model TodoStatus {
+  status String @db.VarChar(10) @unique
+  todos Todo[]
+
+  @@map("todo_status")
 }
