@@ -5,3 +5,35 @@
 body {
   overflow-x: hidden;
 }
+
+.badge-biru {
+  @apply badge badge-primary;
+}
+
+.badge-pink {
+  @apply badge badge-secondary;
+}
+
+.badge-hijau-muda {
+  @apply badge badge-accent;
+}
+
+.badge-abu {
+  @apply badge badge-neutral;
+}
+
+.badge-biru-muda {
+  @apply badge badge-info;
+}
+
+.badge-hijau {
+  @apply badge badge-success;
+}
+
+.badge-kuning {
+  @apply badge badge-warning;
+}
+
+.badge-merah-muda {
+  @apply badge badge-error;
+}
