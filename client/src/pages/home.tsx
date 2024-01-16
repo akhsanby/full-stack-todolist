@@ -30,7 +30,7 @@ function Home({ jwtToken, decodeToken }: HomeProps) {
   if (!todos) return "Loading...";
   return (
     <Layout>
-      <div className="my-[2rem] px-[3rem]">
+      <div className="my-[1rem] px-[3rem]">
         <WrapperCategoryList />
         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-3 justify-items-center">
           <ContentTodo decodeToken={decodeToken} />
