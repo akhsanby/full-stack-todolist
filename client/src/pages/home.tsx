@@ -15,12 +15,18 @@ function Home({ jwtToken, decodeToken }: HomeProps) {
   const todos = useTodoStore((state) => state.todos);
   const storeTodos = useTodoStore((state) => state.storeTodos);
 
-  async function getTodos() {
-    const result = await axiosClient.get(`/api/todos/${decodeToken.user_id}`, {
-      headers: { Authorization: jwtToken },
-    });
-    const { data } = result.data;
-    storeTodos(data);
+  function getTodos() {
+    axiosClient
+      .get(`/api/todos/${decodeToken.user_id}`, {
+        headers: { Authorization: jwtToken },
+      })
+      .then((result) => {
+        const { data } = result.data;
+        storeTodos(data);
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 
   useEffect(() => {
@@ -29,8 +35,8 @@ function Home({ jwtToken, decodeToken }: HomeProps) {
 
   if (!todos) return "Loading...";
   return (
-    <Layout>
-      <div className="my-[2rem] px-[3rem]">
+    <Layout jwtToken={jwtToken} decodeToken={decodeToken}>
+      <div className="my-[1rem] px-[3rem]">
         <WrapperCategoryList />
         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-3 justify-items-center">
           <ContentTodo decodeToken={decodeToken} />
