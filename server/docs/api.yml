@@ -1,0 +1,60 @@
+openapi: "3.0.2"
+info:
+  title: Todo List
+  version: "1.0"
+servers:
+  - url: https://localhost:8000
+tags:
+  - name: "User"
+  - name: "Todo"
+paths:
+  /api/user/register:
+    post:
+      tags:
+        - "User"
+      summary: "Register or Login with old or new account"
+      responses:
+        "200":
+          description: OK
+
+  /api/user/logout:
+    put:
+      tags:
+        - "User"
+      summary: "Logout account & clear token"
+      responses:
+        "200":
+          description: OK
+
+  /api/todo:
+    post:
+      tags:
+        - "Todo"
+      summary: "Create new todo"
+      responses:
+        "201":
+          description: OK
+    patch:
+      tags:
+        - "Todo"
+      summary: "Update selected todo"
+      responses:
+        "201":
+          description: OK
+
+    delete:
+      tags:
+        - "Todo"
+      summary: "Remove selected todo"
+      responses:
+        "201":
+          description: OK
+
+  /api/todo/{userId}:
+    get:
+      tags:
+        - "Todo"
+      summary: "Get list todo"
+      responses:
+        "200":
+          description: OK
