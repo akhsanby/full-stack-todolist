@@ -1,31 +1,33 @@
 import prismaClient from "../../src/app/database.js";
 import { faker } from "@faker-js/faker";
+import moment from "moment";
+import { v4 as uuid } from "uuid";
 
 async function seed() {
   try {
-    const user = await prismaClient.user.create({
-      data: {
+    let user = await prismaClient.user.findFirst({
+      where: {
         username: "Akhsan",
       },
     });
 
+    if (!user) {
+      await prismaClient.user.create({
+        data: {
+          username: "Akhsan",
+        },
+      });
+    }
+
     for (let i = 1; i <= 10; i++) {
-      await prismaClient.TodoUpcoming.create({
+      await prismaClient.todo.create({
         data: {
-          text: faker.lorem.text(),
+          todo_id: uuid(),
+          category: JSON.stringify(["Uncategorized"]),
+          text: faker.lorem.words(3),
           user_id: user.user_id,
-        },
-      });
-      await prismaClient.TodoProgress.create({
-        data: {
-          text: faker.lorem.text(),
-          user_id: user.user_id,
-        },
-      });
-      await prismaClient.TodoDone.create({
-        data: {
-          text: faker.lorem.text(),
-          user_id: user.user_id,
+          status: faker.helpers.arrayElement(["todo", "doing", "done"]),
+          createdAt: moment().locale("id").format("Do MMM YYYY, HH:mm"),
         },
       });
     }
