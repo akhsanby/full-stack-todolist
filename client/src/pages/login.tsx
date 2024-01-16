@@ -14,7 +14,7 @@ function Login({ router }: Props) {
 
   function handleLogin() {
     axios
-      .post("http://localhost:8000/api/register", {
+      .post("http://localhost:8000/api/user/register", {
         username,
       })
       .then((result) => {
