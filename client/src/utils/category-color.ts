@@ -1,35 +1,35 @@
 export const badgeButton = [
   {
     name: "Uncategorized",
-    colorClass: "badge badge-neutral",
+    colorClass: "badge-abu",
   },
   {
     name: "Personal",
-    colorClass: "badge badge-primary",
+    colorClass: "badge-biru",
   },
   {
     name: "Work",
-    colorClass: "badge badge-secondary",
+    colorClass: "badge-pink",
   },
   {
     name: "Shopping",
-    colorClass: "badge badge-accent",
+    colorClass: "badge-hijau-muda",
   },
   {
     name: "Health",
-    colorClass: "badge badge-info",
+    colorClass: "badge-biru-muda",
   },
   {
     name: "Education",
-    colorClass: "badge badge-success",
+    colorClass: "badge-hijau",
   },
   {
     name: "Social",
-    colorClass: "badge badge-warning",
+    colorClass: "badge-kuning",
   },
   {
     name: "Finance",
-    colorClass: "badge badge-error",
+    colorClass: "badge-merah-muda",
   },
 ];
 
