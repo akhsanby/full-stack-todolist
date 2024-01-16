@@ -1,9 +1,9 @@
 import LayoutAuth from "@/components/LayoutAuth";
 import { withRouter } from "next/router";
 import type { Router } from "next/router";
-import axios from "axios";
 import { useState } from "react";
 import { setCookie } from "nookies";
+import axiosClient from "@/utils/api";
 
 type Props = {
   router: Router;
@@ -13,8 +13,8 @@ function Login({ router }: Props) {
   const [username, setUsername] = useState<string>("");
 
   function handleLogin() {
-    axios
-      .post("http://localhost:8000/api/user/register", {
+    axiosClient
+      .post("/api/user/register", {
         username,
       })
       .then((result) => {
@@ -25,7 +25,7 @@ function Login({ router }: Props) {
         }
       })
       .catch((err) => {
-        console.error(err);
+        throw new Error(err);
       });
   }
 
