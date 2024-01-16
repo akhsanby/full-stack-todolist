@@ -1,5 +1,5 @@
 import validate from "../validation/validate.js";
-import { registerValidation, loginValidation } from "../validation/user-validation.js";
+import { registerValidation, loginValidation, logoutValidation } from "../validation/user-validation.js";
 import prismaClient from "../app/database.js";
 import jwt from "jsonwebtoken";
 
@@ -59,7 +59,24 @@ async function login(user) {
   });
 }
 
+async function logout(user) {
+  user = validate(logoutValidation, user);
+
+  return await prismaClient.user.update({
+    where: {
+      user_id: user.user_id,
+      AND: {
+        username: user.username,
+      },
+    },
+    data: {
+      token: null,
+    },
+  });
+}
+
 export default {
   register,
   login,
+  logout,
 };

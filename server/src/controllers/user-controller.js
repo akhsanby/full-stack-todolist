@@ -10,6 +10,15 @@ async function register(req, res) {
   });
 }
 
+async function logout(req, res) {
+  await userService.logout(req.body);
+
+  res.status(200).json({
+    status: "Logout",
+  });
+}
+
 export default {
   register,
+  logout,
 };
