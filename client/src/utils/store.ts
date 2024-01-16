@@ -24,6 +24,8 @@ interface TodoState {
   setTodo: {
     status?: "todo" | "doing" | "done";
     category?: string[];
+    selectedCategoryTodo?: string;
+    moveStatus?: string;
     text?: string;
     todo_id: string;
     user_id: string;
@@ -39,6 +41,8 @@ export const useTodoStore = create<TodoState>()((set) => ({
   setTodo: {
     status: undefined,
     category: [],
+    selectedCategoryTodo: "",
+    moveStatus: "",
     text: "",
     todo_id: "",
     user_id: "",

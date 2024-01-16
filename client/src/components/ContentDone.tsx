@@ -57,39 +57,74 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
     });
   }
 
-  function handleDragOverCategory(e: any, todo: any) {
+  function handleDragOverCategoryWrapper(e: any, todo: any) {
     e.preventDefault();
     selectedTodo.todo_id = todo.todo_id;
     selectedTodo.category = todo.category;
     selectedTodo.user_id = todo.user_id;
   }
 
-  function handleDragLeaveCategory(e: any) {
+  function handleDragLeaveCategoryWrapper(e: any) {
     e.preventDefault();
     selectedTodo.todo_id = "";
-    selectedTodo.category = [];
     selectedTodo.user_id = "";
+    selectedTodo.selectedCategoryTodo = "";
+  }
+
+  function handleDragEndCategoryBadge(e: any, todo: any) {
+    e.preventDefault();
+    selectedTodo.todo_id = todo.todo_id;
+    selectedTodo.category = todo.category.filter((item: any) => item !== selectedTodo.selectedCategoryTodo);
+    selectedTodo.user_id = todo.user_id;
+
+    if (selectedTodo.todo_id || selectedTodo.user_id) {
+      if (selectedTodo.category && selectedTodo.category.length === 0) selectedTodo.category?.push("Uncategorized");
+      updateTodo({
+        category: selectedTodo.category,
+        todo_id: selectedTodo.todo_id,
+        user_id: selectedTodo.user_id,
+      });
+    }
+  }
+
+  function handleDragEndCard(e: any, todo: any) {
+    e.preventDefault();
+    selectedTodo.status = contentStatus;
+    selectedTodo.todo_id = todo.todo_id;
+    selectedTodo.user_id = todo.user_id;
+    if (selectedTodo.todo_id || selectedTodo.user_id) {
+      updateTodo({
+        status: selectedTodo.moveStatus,
+        todo_id: selectedTodo.todo_id,
+        user_id: selectedTodo.user_id,
+      });
+    }
+  }
+
+  function handleDragOverCard(e: any) {
+    e.preventDefault();
+    selectedTodo.moveStatus = contentStatus;
   }
 
   return (
-    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`}>
+    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`} id="container-done" onDragOver={handleDragOverCard}>
       <div className="card-body px-[1.5rem] py-[1rem] text-white">
         <h2 className="card-title">Done</h2>
         {done &&
           done.map((todo) => {
             return (
-              <div key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
+              <div key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`} draggable onDragEnd={(e) => handleDragEndCard(e, todo)}>
                 <div className="card-body px-[1rem] py-[1rem] text-white">
-                  <h2 className="card-title flex-wrap" onDragOver={(e) => handleDragOverCategory(e, todo)} onDragLeave={handleDragLeaveCategory}>
+                  <h2 className="card-title flex-wrap" onDragOver={(e) => handleDragOverCategoryWrapper(e, todo)} onDragLeave={handleDragLeaveCategoryWrapper}>
                     {todo.category.map((item: any, index: any) => (
-                      <div key={index} className={`${setColor(item)} rounded-md cursor-grab select-none font-semibold`}>
+                      <div key={index} className={`${setColor(item)} !rounded cursor-grab select-none font-semibold`} draggable onDragEnd={(e) => handleDragEndCategoryBadge(e, todo)}>
                         {item}
                       </div>
                     ))}
                   </h2>
-                  <div className="grid grid-cols-6 gap-4">
-                    <div className="col-span-5">
-                      <div onClick={() => handleEditing(todo)}>{editing.isEdit && editing.todoId === todo.todo_id ? <input type="text" onBlur={() => handleUpdateTodoText()} onChange={(e) => setEditing({ ...editing, text: e.target.value })} autoFocus placeholder="Type here" value={editing.text} className="input w-full" /> : <span className="text-wrap">{todo.text}</span>}</div>
+                  <div className="grid grid-cols-12 gap-2">
+                    <div className="col-span-11">
+                      <div onClick={() => handleEditing(todo)}>{editing.isEdit && editing.todoId === todo.todo_id ? <input type="text" onBlur={() => handleUpdateTodoText()} onChange={(e) => setEditing({ ...editing, text: e.target.value })} autoFocus placeholder="Type here" value={editing.text} className="input w-full" /> : <span className="text-wrap line-through">{todo.text}</span>}</div>
                     </div>
                     <div className="justify-self-end place-self-center tooltip tooltip-error" data-tip="Remove">
                       <svg onClick={() => handleRemoveTodo(todo)} className="fill-error cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
