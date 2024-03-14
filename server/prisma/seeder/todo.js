@@ -19,6 +19,10 @@ async function seed() {
       });
     }
 
+    await prismaClient.todostatus.create({
+      data: [{ status: "todo" }, { status: "doing" }, { status: "done" }],
+    });
+
     for (let i = 1; i <= 10; i++) {
       await prismaClient.todo.create({
         data: {
