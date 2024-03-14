@@ -15,7 +15,7 @@ async function seed() {
   } catch (error) {
     console.error("Seeder Category error:", error);
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 }
 
