@@ -1,0 +1,46 @@
+version: "3.4"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: todo-list
+    ports:
+      - 3306:3306
+    expose:
+      - "3306"
+    restart: always
+    networks:
+      - shared-networks
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin:5-fpm-alpine
+    environment:
+      PMA_HOST: mysql
+    links:
+      - mysql:mysql
+    ports:
+      - 8080:80
+    restart: always
+  server:
+    build: ./server
+    container_name: server_container
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    networks:
+      - shared-networks
+    entrypoint: sh -c "npx prisma generate && npx prisma migrate dev"
+  client:
+    build: ./client
+    container_name: client_container
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+
+networks:
+  shared-networks:
