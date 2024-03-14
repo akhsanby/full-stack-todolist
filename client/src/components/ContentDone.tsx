@@ -57,67 +57,18 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
     });
   }
 
-  function handleDragOverCategoryWrapper(e: any, todo: any) {
-    e.preventDefault();
-    selectedTodo.todo_id = todo.todo_id;
-    selectedTodo.category = todo.category;
-    selectedTodo.user_id = todo.user_id;
-  }
-
-  function handleDragLeaveCategoryWrapper(e: any) {
-    e.preventDefault();
-    selectedTodo.todo_id = "";
-    selectedTodo.user_id = "";
-    selectedTodo.selectedCategoryTodo = "";
-  }
-
-  function handleDragEndCategoryBadge(e: any, todo: any) {
-    e.preventDefault();
-    selectedTodo.todo_id = todo.todo_id;
-    selectedTodo.category = todo.category.filter((item: any) => item !== selectedTodo.selectedCategoryTodo);
-    selectedTodo.user_id = todo.user_id;
-
-    if (selectedTodo.todo_id || selectedTodo.user_id) {
-      if (selectedTodo.category && selectedTodo.category.length === 0) selectedTodo.category?.push("Uncategorized");
-      updateTodo({
-        category: selectedTodo.category,
-        todo_id: selectedTodo.todo_id,
-        user_id: selectedTodo.user_id,
-      });
-    }
-  }
-
-  function handleDragEndCard(e: any, todo: any) {
-    e.preventDefault();
-    selectedTodo.status = contentStatus;
-    selectedTodo.todo_id = todo.todo_id;
-    selectedTodo.user_id = todo.user_id;
-    if (selectedTodo.todo_id || selectedTodo.user_id) {
-      updateTodo({
-        status: selectedTodo.moveStatus,
-        todo_id: selectedTodo.todo_id,
-        user_id: selectedTodo.user_id,
-      });
-    }
-  }
-
-  function handleDragOverCard(e: any) {
-    e.preventDefault();
-    selectedTodo.moveStatus = contentStatus;
-  }
-
   return (
-    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`} id="container-done" onDragOver={handleDragOverCard}>
+    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`} id="container-done">
       <div className="card-body px-[1.5rem] py-[1rem] text-white">
         <h2 className="card-title">Done</h2>
         {done &&
           done.map((todo) => {
             return (
-              <div key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`} draggable onDragEnd={(e) => handleDragEndCard(e, todo)}>
+              <div key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
                 <div className="card-body px-[1rem] py-[1rem] text-white">
-                  <h2 className="card-title flex-wrap" onDragOver={(e) => handleDragOverCategoryWrapper(e, todo)} onDragLeave={handleDragLeaveCategoryWrapper}>
+                  <h2 className="card-title flex-wrap">
                     {todo.category.map((item: any, index: any) => (
-                      <div key={index} className={`${setColor(item)} !rounded cursor-grab select-none font-semibold`} draggable onDragEnd={(e) => handleDragEndCategoryBadge(e, todo)}>
+                      <div key={index} className={`${setColor(item)} !rounded cursor-grab select-none font-semibold`}>
                         {item}
                       </div>
                     ))}
