@@ -3,7 +3,7 @@ import { faker } from "@faker-js/faker";
 import moment from "moment";
 import { v4 as uuid } from "uuid";
 
-async function seed() {
+export default async function todoSeeder() {
   try {
     let user = await prismaClient.user.findFirst({
       where: {
@@ -19,9 +19,12 @@ async function seed() {
       });
     }
 
-    await prismaClient.todostatus.create({
-      data: [{ status: "todo" }, { status: "doing" }, { status: "done" }],
-    });
+    const todoStatusData = [{ status: "todo" }, { status: "doing" }, { status: "done" }];
+    for (const data of todoStatusData) {
+      await prismaClient.todoStatus.create({
+        data,
+      });
+    }
 
     for (let i = 1; i <= 10; i++) {
       await prismaClient.todo.create({
@@ -43,5 +46,3 @@ async function seed() {
     await prismaClient.$disconnect();
   }
 }
-
-seed();
