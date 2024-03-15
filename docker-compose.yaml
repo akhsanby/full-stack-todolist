@@ -33,7 +33,6 @@ services:
       - mysql
     networks:
       - shared-networks
-    entrypoint: sh -c "npx prisma generate && npx prisma migrate dev"
   client:
     build: ./client
     container_name: client_container
