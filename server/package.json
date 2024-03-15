@@ -4,6 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "run:seeder": "node ./prisma/seeder/index.js",
     "start": "nodemon ./src/main.js"
   },
   "jest": {
