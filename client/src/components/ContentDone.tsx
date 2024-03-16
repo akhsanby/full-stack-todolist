@@ -18,9 +18,9 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
   const createTodo = useTodoStore((state) => state.createTodo);
   const updateTodo = useTodoStore((state) => state.updateTodo);
   const removeTodo = useTodoStore((state) => state.removeTodo);
-  const selectedTodo = useTodoStore((state) => state.setTodo);
 
   const [editing, setEditing] = useState(initialEditingState);
+  const [hoveredCategory, setHoveredCategory] = useState<string>("");
 
   function handleEditing(todo: any) {
     setEditing({
@@ -57,42 +57,76 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
     });
   }
 
-  function dropTodo(ev: any) {
-    ev.preventDefault();
-    var todo_id = ev.dataTransfer.getData("todo_id");
+  function handleRemoveCategory(todo: any, categoryName: string) {
+    const { todo_id, category } = todo;
+    const filteredCategory = category.filter((item: string) => item !== categoryName);
     updateTodo({
       todo_id,
-      status: contentStatus,
+      category: filteredCategory.length > 0 ? filteredCategory : ["Uncategorized"], // if custom category is not set, set default with "Uncategorized"
       user_id: decodeToken.user_id,
     });
   }
 
-  function allowDropTodo(ev: any) {
+  function dropTodo(ev: any) {
+    ev.preventDefault();
     // check format data is "todo_id"
     if (ev.dataTransfer.types.includes("todo_id")) {
-      ev.preventDefault(); // allow drop
+      const todo_id = ev.dataTransfer.getData("todo_id");
+      updateTodo({
+        todo_id,
+        status: contentStatus,
+        user_id: decodeToken.user_id,
+      });
     }
   }
 
+  function allowDrop(ev: any) {
+    ev.preventDefault();
+  }
+
   function dragTodo(ev: any) {
-    ev.dataTransfer.setData("todo_id", ev.target.id);
+    ev.dataTransfer.setData("todo_id", ev.currentTarget.id);
+  }
+
+  function dropCategory(ev: any) {
+    ev.preventDefault();
+    // check format data is "category"
+    if (ev.dataTransfer.types.includes("category")) {
+      const categoryName = ev.dataTransfer.getData("category");
+      const todo_id = ev.currentTarget.id;
+      const currentCategories = Array.from(ev.currentTarget.children)
+        .map((elem: any) => elem.innerText)
+        .filter((category) => category !== "Uncategorized") // remove "Uncategorized"
+        .filter((category) => category !== categoryName); // remove same category name
+      updateTodo({
+        todo_id,
+        category: [...currentCategories, categoryName],
+        user_id: decodeToken.user_id,
+      });
+    }
   }
 
   return (
     <div className={`card w-full shadow-xl bg-gray-700 rounded-md`} id="container-done">
-      <div className="card-body px-[1.5rem] py-[1rem] text-white" onDrop={dropTodo} onDragOver={allowDropTodo}>
+      <div className="card-body px-[1.5rem] py-[1rem] text-white" onDrop={dropTodo} onDragOver={allowDrop}>
         <h2 className="card-title">Done</h2>
         {done &&
           done.map((todo) => {
             return (
               <div draggable onDragStart={dragTodo} id={todo.todo_id} key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
                 <div className="card-body px-[1rem] py-[1rem] text-white">
-                  <h2 className="card-title flex-wrap">
-                    {todo.category.map((item: any, index: any) => (
-                      <div key={index} className={`${setColor(item)} !rounded cursor-grab select-none font-semibold`}>
-                        {item}
-                      </div>
-                    ))}
+                  <h2 className="card-title flex-nowrap overflow-y-auto pb-1" id={todo.todo_id} onDrop={dropCategory} onDragOver={allowDrop} style={{ scrollbarWidth: "none" }}>
+                    {todo.category &&
+                      todo.category.map((item: any, index: any) => (
+                        <div onMouseEnter={() => setHoveredCategory(item)} onMouseLeave={() => setHoveredCategory("")} key={index} className={`${setColor(item)} flex items-center gap-x-1 !rounded select-none font-semibold`}>
+                          <span>{item}</span>
+                          {hoveredCategory === item && hoveredCategory !== "Uncategorized" && (
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" className="w-3 cursor-pointer" onClick={() => handleRemoveCategory(todo, item)}>
+                              <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" />
+                            </svg>
+                          )}
+                        </div>
+                      ))}
                   </h2>
                   <div className="grid grid-cols-12 gap-2">
                     <div className="col-span-11">
