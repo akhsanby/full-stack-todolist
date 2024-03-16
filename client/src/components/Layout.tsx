@@ -39,7 +39,7 @@ export default function Layout({ children, jwtToken, decodeToken }: Props) {
 
   return (
     <div className="w-screen h-full px-3 py-3">
-      <button className="btn btn-error btn-sm float-end" onClick={handleLogout}>
+      <button className="btn btn-error btn-sm float-end me-12" onClick={handleLogout}>
         Logout
       </button>
       {children}
