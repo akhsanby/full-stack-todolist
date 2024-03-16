@@ -12,6 +12,7 @@ type Todos = {
 
 type Todo = {
   todo_id: string;
+  index: number;
   status: "todo" | "doing" | "done";
   category: string[];
   text: string;
@@ -24,6 +25,7 @@ interface TodoState {
   setTodo: {
     status?: "todo" | "doing" | "done";
     category?: string[];
+    index: number;
     text?: string;
     todo_id: string;
     user_id: string;
@@ -39,6 +41,7 @@ export const useTodoStore = create<TodoState>()((set) => ({
   setTodo: {
     status: undefined,
     category: [],
+    index: 0,
     text: "",
     todo_id: "",
     user_id: "",
@@ -60,6 +63,9 @@ export const useTodoStore = create<TodoState>()((set) => ({
         }
         if (item.todo_id === data.todo_id && data.text) {
           item.text = data.text;
+        }
+        if (item.todo_id === data.todo_id && data.index) {
+          item.index = data.index;
         }
         return item;
       });

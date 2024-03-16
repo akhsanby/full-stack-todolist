@@ -12,6 +12,7 @@ type CreateTodoTypes = {
   todo_id: string;
   status: "todo" | "doing" | "done";
   category: string[];
+  index: number;
   text: string;
   user_id: string;
   createdAt: string;
@@ -30,6 +31,7 @@ type UpdateTodoTypes = {
   status?: "todo" | "doing" | "done" | string;
   category?: string[];
   todo_id: string;
+  index: number;
   text?: string;
   user_id: string;
 };
