@@ -19,21 +19,41 @@ export default async function todoSeeder() {
       });
     }
 
-    const todoStatusData = [{ status: "todo" }, { status: "doing" }, { status: "done" }];
-    for (const data of todoStatusData) {
-      await prismaClient.todoStatus.create({
-        data,
-      });
+    let todoStatus = await prismaClient.todoStatus.count();
+    if (!todoStatus) {
+      const todoStatusData = [{ status: "todo" }, { status: "doing" }, { status: "done" }];
+      for (const data of todoStatusData) {
+        await prismaClient.todoStatus.create({
+          data,
+        });
+      }
     }
 
+    // Variabel saved total todo, doing, and done
+    let todo = 0;
+    let doing = 0;
+    let done = 0;
+
     for (let i = 1; i <= 10; i++) {
+      const status = faker.helpers.arrayElement(["todo", "doing", "done"]); // Tentukan status secara acak
+
+      // Hitung jumlah masing-masing status
+      if (status === "todo") {
+        todo++;
+      } else if (status === "doing") {
+        doing++;
+      } else if (status === "done") {
+        done++;
+      }
+
       await prismaClient.todo.create({
         data: {
           todo_id: uuid(),
+          index: status === "todo" ? todo - 1 : status === "doing" ? doing - 1 : done - 1,
           category: JSON.stringify(["Uncategorized"]),
           text: faker.lorem.words(3),
           user_id: user.user_id,
-          status: faker.helpers.arrayElement(["todo", "doing", "done"]),
+          status: status,
           createdAt: moment().locale("id").format("Do MMM YYYY, HH:mm"),
         },
       });
