@@ -33,6 +33,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
   const handleCreateTodo = async () => {
     createTodo({
       todo_id: uuid(),
+      index: done.length,
       status: contentStatus,
       category: ["Uncategorized"],
       text: faker.lorem.words(3),
@@ -72,8 +73,11 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
     // check format data is "todo_id"
     if (ev.dataTransfer.types.includes("todo_id")) {
       const todo_id = ev.dataTransfer.getData("todo_id");
+      const index = ev.dataTransfer.getData("index");
+      console.log(index);
       updateTodo({
         todo_id,
+        index: 0,
         status: contentStatus,
         user_id: decodeToken.user_id,
       });
@@ -86,6 +90,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
 
   function dragTodo(ev: any) {
     ev.dataTransfer.setData("todo_id", ev.currentTarget.id);
+    ev.dataTransfer.setData("index", ev.currentTarget.getAttribute("data-position"));
   }
 
   function dropCategory(ev: any) {
@@ -100,6 +105,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
         .filter((category) => category !== categoryName); // remove same category name
       updateTodo({
         todo_id,
+        index: 0,
         category: [...currentCategories, categoryName],
         user_id: decodeToken.user_id,
       });
@@ -113,7 +119,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
         {done &&
           done.map((todo) => {
             return (
-              <div draggable onDragStart={dragTodo} id={todo.todo_id} key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
+              <div draggable onDragStart={dragTodo} id={todo.todo_id} data-position={todo.index} key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
                 <div className="card-body px-[1rem] py-[1rem] text-white">
                   <h2 className="card-title flex-nowrap overflow-y-auto pb-1" id={todo.todo_id} onDrop={dropCategory} onDragOver={allowDrop} style={{ scrollbarWidth: "none" }}>
                     {todo.category &&

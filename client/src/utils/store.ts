@@ -3,6 +3,7 @@ import { createTodoAPI, updateTodoAPI, removeTodoAPI } from "@/utils/api";
 
 type Todos = {
   todo_id: string;
+  index: number;
   status: "todo" | "doing" | "done";
   category: string[];
   text: string;
