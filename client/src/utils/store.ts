@@ -41,8 +41,6 @@ export const useTodoStore = create<TodoState>()((set) => ({
   setTodo: {
     status: undefined,
     category: [],
-    selectedCategoryTodo: "",
-    moveStatus: "",
     text: "",
     todo_id: "",
     user_id: "",
