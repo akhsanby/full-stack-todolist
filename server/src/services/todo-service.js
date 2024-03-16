@@ -2,12 +2,13 @@ import validate from "../validation/validate.js";
 import { createValidation, updateValidation, listValidation, removeValidation } from "../validation/todo-validation.js";
 import prismaClient from "../app/database.js";
 
-async function create(request, refetch) {
+async function create(request) {
   request = validate(createValidation, request);
 
   const newTodo = await prismaClient.todo.create({
     data: {
       todo_id: request.todo_id,
+      index: request.index,
       user_id: request.user_id,
       category: JSON.stringify(request.category),
       status: request.status,
@@ -16,11 +17,7 @@ async function create(request, refetch) {
     },
   });
 
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return newTodo;
-  }
+  return newTodo;
 }
 
 async function list(user_id) {
@@ -42,13 +39,17 @@ async function list(user_id) {
   return newTodos;
 }
 
-async function update(request, refetch) {
+async function update(request) {
   request = validate(updateValidation, request);
 
   let data = {};
 
   if (request.status) {
     data.status = request.status;
+  }
+
+  if (request.index) {
+    data.index = request.index;
   }
 
   if (request.category) {
@@ -69,17 +70,13 @@ async function update(request, refetch) {
     data: data,
   });
 
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return selectedTodo;
-  }
+  return selectedTodo;
 }
 
-async function remove(request, refetch) {
+async function remove(request) {
   request = validate(removeValidation, request);
 
-  const selectedTodo = await prismaClient.todo.delete({
+  const removedTodo = await prismaClient.todo.delete({
     where: {
       todo_id: request.todo_id,
       AND: {
@@ -88,11 +85,25 @@ async function remove(request, refetch) {
     },
   });
 
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return selectedTodo;
+  const remainingTodos = await prismaClient.todo.findMany({
+    where: {
+      status: removedTodo.status,
+    },
+  });
+
+  for (let i = 0; i < remainingTodos.length; i++) {
+    const todo = remainingTodos[i];
+    await prismaClient.todo.update({
+      where: {
+        todo_id: todo.todo_id,
+      },
+      data: {
+        index: i,
+      },
+    });
   }
+
+  return removedTodo;
 }
 
 export default {
