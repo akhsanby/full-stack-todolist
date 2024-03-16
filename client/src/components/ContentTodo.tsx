@@ -57,14 +57,35 @@ export default function ContentTodo({ decodeToken }: ContentTodoProps) {
     });
   }
 
+  function dropTodo(ev: any) {
+    ev.preventDefault();
+    var todo_id = ev.dataTransfer.getData("todo_id");
+    updateTodo({
+      todo_id,
+      status: contentStatus,
+      user_id: decodeToken.user_id,
+    });
+  }
+
+  function allowDropTodo(ev: any) {
+    // check format data is "todo_id"
+    if (ev.dataTransfer.types.includes("todo_id")) {
+      ev.preventDefault(); // allow drop
+    }
+  }
+
+  function dragTodo(ev: any) {
+    ev.dataTransfer.setData("todo_id", ev.target.id);
+  }
+
   return (
     <div className={`card w-full shadow-xl bg-gray-700 rounded-md`}>
-      <div className="card-body px-[1.5rem] py-[1rem] text-white">
+      <div className="card-body px-[1.5rem] py-[1rem] text-white" onDrop={dropTodo} onDragOver={allowDropTodo}>
         <h2 className="card-title">Todo</h2>
         {todos &&
           todos.map((todo) => {
             return (
-              <div key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
+              <div draggable onDragStart={dragTodo} id={todo.todo_id} key={todo.todo_id} className={`card bg-base-100 shadow-xl rounded-md select-none`}>
                 <div className="card-body px-[1rem] py-[1rem] text-white">
                   <h2 className="card-title flex-wrap">
                     {todo.category.map((item: any, index: any) => (
