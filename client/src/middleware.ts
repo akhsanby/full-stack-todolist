@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import isAuthorized from "@/utils/is-auth";
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
-  const isAuth = await isAuthorized(token);
   const url = req.nextUrl;
   const loginUrl = new URL("/login", url.origin);
   const homeUrl = new URL("/home", url.origin);
