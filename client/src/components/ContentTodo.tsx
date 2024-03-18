@@ -83,7 +83,7 @@ export default function ContentTodo({ decodeToken }: ContentTodoProps) {
   }
 
   return (
-    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`}>
+    <div className={`card w-full min-w-[20rem] shadow-xl bg-gray-700 rounded-md`}>
       <div className="card-body px-[1.5rem] py-[1rem] text-white">
         <h2 className="card-title">Todo</h2>
         <Droppable droppableId={contentStatus}>
@@ -132,7 +132,7 @@ export default function ContentTodo({ decodeToken }: ContentTodoProps) {
           <svg className="fill-white" xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
             <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
           </svg>
-          <span>Add another card</span>
+          <span>Add another todo</span>
         </button>
       </div>
     </div>

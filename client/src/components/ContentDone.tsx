@@ -82,7 +82,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
   }
 
   return (
-    <div className={`card w-full shadow-xl bg-gray-700 rounded-md`}>
+    <div className={`card w-full min-w-[20rem] shadow-xl bg-gray-700 rounded-md`}>
       <div className="card-body px-[1.5rem] py-[1rem] text-white">
         <h2 className="card-title">Done</h2>
         <Droppable droppableId={contentStatus}>
@@ -110,7 +110,9 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
                             </div>
                             <div className="grid grid-cols-12 gap-2">
                               <div className="col-span-11">
-                                <div onClick={() => handleEditing(todo)}>{editing.isEdit && editing.todo_id === todo.todo_id ? <input type="text" onBlur={() => handleUpdateTodoText()} onChange={(e) => setEditing({ ...editing, text: e.target.value })} autoFocus placeholder="Type here" value={editing.text} className="input w-full" /> : <span className="text-wrap">{todo.text}</span>}</div>
+                                <div className="line-through" onClick={() => handleEditing(todo)}>
+                                  {editing.isEdit && editing.todo_id === todo.todo_id ? <input type="text" onBlur={() => handleUpdateTodoText()} onChange={(e) => setEditing({ ...editing, text: e.target.value })} autoFocus placeholder="Type here" value={editing.text} className="input w-full" /> : <span className="text-wrap">{todo.text}</span>}
+                                </div>
                               </div>
                               <div className="justify-self-end place-self-center tooltip tooltip-error" data-tip="Remove">
                                 <svg onClick={() => handleRemoveTodo(todo)} className="fill-error cursor-pointer" xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
@@ -133,7 +135,7 @@ export default function Contentdone({ decodeToken }: ContentDoneProps) {
           <svg className="fill-white" xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
             <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
           </svg>
-          <span>Add another card</span>
+          <span>Add another todo</span>
         </button>
       </div>
     </div>
