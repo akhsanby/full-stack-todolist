@@ -13,17 +13,6 @@ services:
     restart: always
     networks:
       - shared-networks
-  phpmyadmin:
-    depends_on:
-      - mysql
-    image: phpmyadmin:5-fpm-alpine
-    environment:
-      PMA_HOST: mysql
-    links:
-      - mysql:mysql
-    ports:
-      - 8080:80
-    restart: always
   server:
     build: ./server
     container_name: server_container
