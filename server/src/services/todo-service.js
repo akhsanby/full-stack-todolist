@@ -1,13 +1,14 @@
 import validate from "../validation/validate.js";
-import { createValidation, updateValidation, listValidation, removeValidation } from "../validation/todo-validation.js";
+import { createValidation, updateValidation, updateSyncValidation, listValidation, removeValidation } from "../validation/todo-validation.js";
 import prismaClient from "../app/database.js";
 
-async function create(request, refetch) {
+async function create(request) {
   request = validate(createValidation, request);
 
-  const newTodo = await prismaClient.todo.create({
+  return await prismaClient.todo.create({
     data: {
       todo_id: request.todo_id,
+      position: request.position,
       user_id: request.user_id,
       category: JSON.stringify(request.category),
       status: request.status,
@@ -15,12 +16,6 @@ async function create(request, refetch) {
       createdAt: request.createdAt,
     },
   });
-
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return newTodo;
-  }
 }
 
 async function list(user_id) {
@@ -31,7 +26,7 @@ async function list(user_id) {
       user_id: user_id,
     },
     orderBy: {
-      createdAt: "asc",
+      position: "asc",
     },
   });
 
@@ -42,7 +37,22 @@ async function list(user_id) {
   return newTodos;
 }
 
-async function update(request, refetch) {
+async function sync(request, user_id) {
+  await prismaClient.todo.deleteMany({}); // remove all data
+  await Promise.all(
+    request.map(async (todo) => {
+      validate(updateSyncValidation, todo);
+      todo.category = JSON.stringify(todo.category);
+      await prismaClient.todo.create({
+        data: todo,
+      });
+    })
+  );
+
+  return list(user_id);
+}
+
+async function update(request) {
   request = validate(updateValidation, request);
 
   let data = {};
@@ -59,7 +69,11 @@ async function update(request, refetch) {
     data.text = request.text;
   }
 
-  const selectedTodo = await prismaClient.todo.update({
+  if (request.position) {
+    data.position = request.position;
+  }
+
+  return await prismaClient.todo.update({
     where: {
       todo_id: request.todo_id,
       AND: {
@@ -68,18 +82,12 @@ async function update(request, refetch) {
     },
     data: data,
   });
-
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return selectedTodo;
-  }
 }
 
-async function remove(request, refetch) {
+async function remove(request) {
   request = validate(removeValidation, request);
 
-  const selectedTodo = await prismaClient.todo.delete({
+  return await prismaClient.todo.delete({
     where: {
       todo_id: request.todo_id,
       AND: {
@@ -87,17 +95,12 @@ async function remove(request, refetch) {
       },
     },
   });
-
-  if (refetch === true) {
-    return await list(request.user_id);
-  } else {
-    return selectedTodo;
-  }
 }
 
 export default {
   create,
   list,
+  sync,
   update,
   remove,
 };
