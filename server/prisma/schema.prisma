@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:secret@localhost:3306/todo-list?schema=public"
 }
 
 model User {
