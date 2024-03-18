@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useTodoStore } from "@/utils/store";
 import { DragDropContext, resetServerContext } from "react-beautiful-dnd";
 import type { Props as HomeProps, Todo } from "@/utils/types";
+import { ToastContainer } from "react-toastify";
 
 import ContentTodo from "@/components/ContentTodo";
 import ContentDoing from "@/components/ContentDoing";
@@ -62,16 +63,17 @@ function Home({ jwtToken, decodeToken, resultTodos }: HomeProps) {
 
   return (
     <Layout>
-      <div className="my-[1rem] px-[3rem]">
+      <div className="relative x-[1rem] md:px-[3rem]">
         <WrapperCategoryList jwtToken={jwtToken} decodeToken={decodeToken} />
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-3 justify-items-center">
+          <div className="flex flex-nowrap overflow-x-auto gap-3 justify-items-center">
             <ContentTodo decodeToken={decodeToken} />
             <ContentDoing decodeToken={decodeToken} />
             <ContentDone decodeToken={decodeToken} />
           </div>
         </DragDropContext>
       </div>
+      <ToastContainer closeButton={false} />
     </Layout>
   );
 }
