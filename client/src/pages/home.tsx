@@ -4,45 +4,73 @@ import { jwtDecode } from "jwt-decode";
 import axiosClient from "@/utils/api";
 import { useEffect } from "react";
 import { useTodoStore } from "@/utils/store";
-import type { Props as HomeProps } from "@/utils/types";
+import { DragDropContext, resetServerContext } from "react-beautiful-dnd";
+import type { Props as HomeProps, Todo } from "@/utils/types";
 
 import ContentTodo from "@/components/ContentTodo";
 import ContentDoing from "@/components/ContentDoing";
 import ContentDone from "@/components/ContentDone";
 import WrapperCategoryList from "@/components/WrapperCategoryList";
 
-function Home({ jwtToken, decodeToken }: HomeProps) {
-  const todos = useTodoStore((state) => state.todos);
-  const storeTodos = useTodoStore((state) => state.storeTodos);
-
-  function getTodos() {
-    axiosClient
-      .get(`/api/todos/${decodeToken.user_id}`, {
-        headers: { Authorization: jwtToken },
-      })
-      .then((result) => {
-        const { data } = result.data;
-        storeTodos(data);
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
-  }
+function Home({ jwtToken, decodeToken, resultTodos }: HomeProps) {
+  const todos = useTodoStore((state: any) => state.todos);
+  const moveTodo = useTodoStore((state: any) => state.moveTodo);
+  const storeTodos = useTodoStore((state: any) => state.storeTodos);
 
   useEffect(() => {
-    getTodos();
+    storeTodos(resultTodos);
   }, []);
 
-  if (!todos) return "Loading...";
+  function onDragEnd(result: any) {
+    result.draggableId = JSON.parse(result.draggableId);
+    const { destination, source, draggableId } = result;
+    const { todo_id } = draggableId;
+
+    // Check if the draggable item is dropped outside the droppable area
+    if (!destination) {
+      return;
+    }
+
+    if (source.droppableId !== destination.droppableId) {
+      const sourceTodo = todos[source.droppableId].filter((todo: Todo) => todo.todo_id !== todo_id);
+      draggableId.status = destination.droppableId; // change status
+      const destinationTodo = [...todos[destination.droppableId], draggableId];
+      moveTodo({
+        ...todos,
+        [source.droppableId]: sourceTodo,
+        [destination.droppableId]: destinationTodo,
+      });
+
+      // reorder position in array
+      const draggableTodoIndex = todos[destination.droppableId].indexOf(todo_id);
+      const [reOrdered] = todos[destination.droppableId].splice(draggableTodoIndex, 1);
+      todos[destination.droppableId].splice(destination.index, 0, reOrdered);
+
+      // change key "position" in array
+      todos[source.droppableId].forEach((todo: Todo, index: number) => {
+        todo.position = index;
+      });
+
+      todos[destination.droppableId].forEach((todo: Todo, index: number) => {
+        todo.position = index;
+      });
+    } else {
+      const [reOrdered] = todos[source.droppableId].splice(source.index, 1);
+      todos[source.droppableId].splice(destination.index, 0, reOrdered);
+    }
+  }
+
   return (
-    <Layout jwtToken={jwtToken} decodeToken={decodeToken}>
+    <Layout>
       <div className="my-[1rem] px-[3rem]">
-        <WrapperCategoryList />
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-3 justify-items-center">
-          <ContentTodo decodeToken={decodeToken} />
-          <ContentDoing decodeToken={decodeToken} />
-          <ContentDone decodeToken={decodeToken} />
-        </div>
+        <WrapperCategoryList jwtToken={jwtToken} decodeToken={decodeToken} />
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-3 justify-items-center">
+            <ContentTodo decodeToken={decodeToken} />
+            <ContentDoing decodeToken={decodeToken} />
+            <ContentDone decodeToken={decodeToken} />
+          </div>
+        </DragDropContext>
       </div>
     </Layout>
   );
@@ -52,6 +80,16 @@ export default Home;
 
 export async function getServerSideProps(context: any) {
   const { token } = nookies.get(context);
-  const decodeToken = jwtDecode(token);
-  return { props: { jwtToken: token, decodeToken } };
+  const decodeToken = jwtDecode(token) as {
+    user_id: string;
+    username: string;
+  };
+  resetServerContext();
+
+  const result = await axiosClient.get(`/api/todos/${decodeToken.user_id}`, {
+    headers: { Authorization: token },
+  });
+  const { data } = result.data;
+
+  return { props: { jwtToken: token, decodeToken, resultTodos: data } };
 }
