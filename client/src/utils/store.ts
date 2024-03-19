@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Todos, Todo, TodoState } from "@/utils/types";
+import { Todo, TodoState } from "@/utils/types";
 
 export const useTodoStore = create<TodoState>((set) => ({
   todos: {
@@ -15,7 +15,7 @@ export const useTodoStore = create<TodoState>((set) => ({
       return state.todos;
     });
   },
-  storeTodos: (data: Todos) => {
+  storeTodos: (data: Todo[]) => {
     set(() => {
       const updatedTodos = {
         todo: data.filter((todo) => todo.status === "todo"),
