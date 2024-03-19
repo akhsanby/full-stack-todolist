@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import nookies from "nookies";
 import { jwtDecode } from "jwt-decode";
 import axiosClient from "@/utils/api";
+import axios from "axios";
 import { useEffect } from "react";
 import { useTodoStore } from "@/utils/store";
 import { DragDropContext, resetServerContext } from "react-beautiful-dnd";
@@ -88,9 +89,16 @@ export async function getServerSideProps(context: any) {
   };
   resetServerContext();
 
-  const result = await axiosClient.get(`/api/todos/${decodeToken.user_id}`, {
-    headers: { Authorization: token },
-  });
+  let result;
+  if (process.env.USE_DOCKER) {
+    result = await axios.get(`http://backend_container:8000/api/todos/${decodeToken.user_id}`, {
+      headers: { Authorization: token },
+    });
+  } else {
+    result = await axiosClient.get(`api/todos/${decodeToken.user_id}`, {
+      headers: { Authorization: token },
+    });
+  }
   const { data } = result.data;
 
   return { props: { jwtToken: token, decodeToken, resultTodos: data } };
