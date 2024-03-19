@@ -8,27 +8,23 @@ services:
       MYSQL_DATABASE: todo-list
     ports:
       - 3306:3306
-    expose:
-      - "3306"
     restart: always
-    networks:
-      - shared-networks
   server:
     build: ./server
-    container_name: server_container
+    container_name: backend_container
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - mysql
-    networks:
-      - shared-networks
+    environment:
+      - DATABASE_URL=mysql://root:secret@mysql_db:3306/todo-list?schema=public
   client:
     build: ./client
-    container_name: client_container
+    container_name: frontend_container
     ports:
-      - "3000:3000"
-    stdin_open: true
-    tty: true
-
-networks:
-  shared-networks:
+      - 3000:3000
+    depends_on:
+      - server
+    restart: always
+    environment:
+      - USE_DOCKER=true
