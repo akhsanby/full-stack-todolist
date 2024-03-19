@@ -2,9 +2,9 @@
 
 Aplikasi sederhana untuk mencatat kegiatan Todo yang terintegrasi dengan database MySQL & fitur drag-drop, menggunakan tech stack ExpressJS & NextJS
 
-## Demo Video
+## Preview
 
-[Klik untuk menonton demo](https://drive.google.com/file/d/1LBwBpRduevzK61D8AQFpq2eCIGqMl4oo/view?usp=drive_link)
+![Preview Todo List](https://raw.githubusercontent.com/akhsanby/personal-web/main/public/images/image11.png)
 
 ### Pre-requisite
 
