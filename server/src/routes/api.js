@@ -12,6 +12,7 @@ userRouter.put("/api/user/logout", userController.logout);
 // todo api
 userRouter.post("/api/todo", todoController.create);
 userRouter.get("/api/todos/:userId", todoController.list);
+userRouter.patch("/api/todo/sync/:userId", todoController.sync);
 userRouter.patch("/api/todo", todoController.update);
 userRouter.delete("/api/todo", todoController.remove);
 

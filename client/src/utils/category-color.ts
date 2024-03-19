@@ -1,9 +1,5 @@
 export const badgeButton = [
   {
-    name: "Uncategorized",
-    colorClass: "badge-abu",
-  },
-  {
     name: "Personal",
     colorClass: "badge-biru",
   },

@@ -1,0 +1,30 @@
+version: "3.4"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: todo-list
+    ports:
+      - 3306:3306
+    restart: always
+  server:
+    build: ./server
+    container_name: backend_container
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_URL=mysql://root:secret@mysql_db:3306/todo-list?schema=public
+  client:
+    build: ./client
+    container_name: frontend_container
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
+    restart: always
+    environment:
+      - USE_DOCKER=true

@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "../../node_modules/react-toastify/dist/ReactToastify.css";
+
 body {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .badge-biru {
